@@ -2,6 +2,17 @@ import streamlit as st
 import joblib
 import numpy as np
 
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #1e88e5;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # ======================
 # Konfigurasi Halaman
 # ======================
@@ -126,3 +137,4 @@ st.caption(
     "- Kolesterol total normal: <200 mg/dL\n"
     "Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis medis."
 )
+
