@@ -19,74 +19,94 @@ model = joblib.load("model.pkl")
 # ======================
 # Header
 # ======================
-st.markdown(
-    "<h1 style='text-align: center; color: #d63031;'>Prediksi Risiko Penyakit Jantung</h1>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    "<p style='text-align: center;'>Masukkan data kesehatan untuk mengetahui risiko penyakit jantung</p>",
-    unsafe_allow_html=True
+st.title("❤️ Prediksi Risiko Penyakit Jantung")
+st.write(
+    "Aplikasi ini memprediksi risiko penyakit jantung menggunakan model "
+    "Machine Learning serta mempertimbangkan standar medis tekanan darah dan kolesterol."
 )
 
 st.divider()
 
 # ======================
-# Input Section
+# Input User
 # ======================
-st.subheader("🩺 Data Pasien")
+st.subheader("🩺 Data Kesehatan")
 
-col1, col2 = st.columns(2)
+blood_pressure = st.number_input(
+    "Tekanan Darah Sistolik (mmHg)",
+    min_value=60,
+    max_value=200,
+    help="Tekanan darah normal dewasa < 120 mmHg"
+)
 
-with col1:
-    blood_pressure = st.number_input(
-        "Tekanan Darah (mmHg)",
-        min_value=60,
-        max_value=200,
-        help="Masukkan tekanan darah sistolik"
-    )
-
-with col2:
-    chol = st.number_input(
-        "Kolesterol (mg/dL)",
-        min_value=100,
-        max_value=400,
-        help="Masukkan kadar kolesterol total"
-    )
+chol = st.number_input(
+    "Kolesterol Total (mg/dL)",
+    min_value=100,
+    max_value=400,
+    help="Kolesterol total normal < 200 mg/dL"
+)
 
 st.divider()
 
 # ======================
-# Prediction Button
+# Prediksi
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
+    # Prediksi Model ML
     data = np.array([[blood_pressure, chol]])
     pred = model.predict(data)
 
     st.subheader("📊 Hasil Prediksi")
 
+    # ======================
+    # Evaluasi Medis
+    # ======================
+    tekanan_normal = blood_pressure < 120
+    kolesterol_normal = chol < 200
+
     if pred[0] == 1:
-        st.error("⚠️ **Berisiko Penyakit Jantung**")
+        st.error("⚠️ **BERISIKO Penyakit Jantung**")
+
+        st.markdown("### 🔬 Analisis Medis:")
+        if not tekanan_normal:
+            st.markdown("- Tekanan darah berada di atas batas normal (<120 mmHg).")
+        if not kolesterol_normal:
+            st.markdown("- Kadar kolesterol total melebihi batas normal (<200 mg/dL).")
+
         st.markdown(
-            "- Disarankan melakukan pemeriksaan medis lebih lanjut\n"
-            "- Menjaga pola hidup sehat\n"
+            "💡 **Saran:**\n"
+            "- Lakukan pemeriksaan medis lanjutan\n"
+            "- Jaga pola makan dan aktivitas fisik\n"
             "- Konsultasi dengan tenaga kesehatan"
         )
+
     else:
-        st.success("✅ **Tidak Berisiko Penyakit Jantung**")
+        st.success("✅ **TIDAK BERISIKO Penyakit Jantung**")
+
+        st.markdown("### 🔬 Analisis Medis:")
+        if tekanan_normal:
+            st.markdown("- Tekanan darah berada dalam rentang normal.")
+        else:
+            st.markdown("- Tekanan darah perlu dikontrol meskipun hasil prediksi rendah.")
+
+        if kolesterol_normal:
+            st.markdown("- Kadar kolesterol total masih dalam batas normal.")
+        else:
+            st.markdown("- Kolesterol perlu diperhatikan meskipun risiko rendah.")
+
         st.markdown(
-            "- Pertahankan pola hidup sehat\n"
-            "- Rutin berolahraga\n"
-            "- Lakukan pemeriksaan berkala"
+            "💡 **Saran:**\n"
+            "- Pertahankan gaya hidup sehat\n"
+            "- Lakukan pemeriksaan rutin\n"
+            "- Jaga pola makan seimbang"
         )
 
 # ======================
-# Footer
+# Catatan Medis
 # ======================
-st.markdown(
-    "<hr><p style='text-align:center; font-size:12px;'>"
-    "Aplikasi ini menggunakan model Machine Learning untuk tujuan edukasi"
-    "</p>",
-    unsafe_allow_html=True
+st.divider()
+st.caption(
+    "📌 Catatan: Tekanan darah normal dewasa <120 mmHg dan kolesterol total normal <200 mg/dL. "
+    "Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis medis."
 )
