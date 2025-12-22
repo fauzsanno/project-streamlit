@@ -32,18 +32,28 @@ st.divider()
 # ======================
 st.subheader("🩺 Data Kesehatan")
 
-blood_pressure = st.number_input(
+sistolik = st.number_input(
     "Tekanan Darah Sistolik (mmHg)",
-    min_value=60,
+    min_value=70,
     max_value=200,
-    help="Tekanan darah normal dewasa < 120 mmHg"
+    value=120,
+    help="Normal: < 120 mmHg"
+)
+
+diastolik = st.number_input(
+    "Tekanan Darah Diastolik (mmHg)",
+    min_value=40,
+    max_value=130,
+    value=80,
+    help="Normal: ≥ 60 mmHg"
 )
 
 chol = st.number_input(
     "Kolesterol Total (mg/dL)",
     min_value=100,
     max_value=400,
-    help="Kolesterol total normal < 200 mg/dL"
+    value=180,
+    help="Normal: < 200 mg/dL"
 )
 
 st.divider()
@@ -53,32 +63,36 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
+    # ======================
     # Prediksi Model ML
-    data = np.array([[blood_pressure, chol]])
+    # ======================
+    data = np.array([[sistolik, diastolik, chol]])
     pred = model.predict(data)
 
     st.subheader("📊 Hasil Prediksi")
 
     # ======================
-    # Evaluasi Medis
+    # Evaluasi Medis (Rule-Based)
     # ======================
-    tekanan_normal = blood_pressure < 120
+    tekanan_normal = (sistolik < 120) and (diastolik >= 60)
     kolesterol_normal = chol < 200
 
     if pred[0] == 1:
         st.error("⚠️ **BERISIKO Penyakit Jantung**")
 
         st.markdown("### 🔬 Analisis Medis:")
-        if not tekanan_normal:
-            st.markdown("- Tekanan darah berada di atas batas normal (<120 mmHg).")
+        if sistolik >= 120:
+            st.markdown("- Tekanan darah sistolik berada di atas batas normal (<120 mmHg).")
+        if diastolik < 60:
+            st.markdown("- Tekanan darah diastolik terlalu rendah (<60 mmHg / hipotensi).")
         if not kolesterol_normal:
             st.markdown("- Kadar kolesterol total melebihi batas normal (<200 mg/dL).")
 
         st.markdown(
-            "💡 **Saran:**\n"
+            "💡 **Saran Medis:**\n"
             "- Lakukan pemeriksaan medis lanjutan\n"
-            "- Jaga pola makan dan aktivitas fisik\n"
-            "- Konsultasi dengan tenaga kesehatan"
+            "- Kendalikan tekanan darah dan kolesterol\n"
+            "- Konsultasi dengan dokter atau tenaga kesehatan"
         )
 
     else:
@@ -88,18 +102,18 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         if tekanan_normal:
             st.markdown("- Tekanan darah berada dalam rentang normal.")
         else:
-            st.markdown("- Tekanan darah perlu dikontrol meskipun hasil prediksi rendah.")
+            st.markdown("- Tekanan darah perlu dipantau meskipun risiko rendah.")
 
         if kolesterol_normal:
-            st.markdown("- Kadar kolesterol total masih dalam batas normal.")
+            st.markdown("- Kadar kolesterol total berada dalam batas normal.")
         else:
-            st.markdown("- Kolesterol perlu diperhatikan meskipun risiko rendah.")
+            st.markdown("- Kolesterol perlu dikontrol untuk mencegah risiko di masa depan.")
 
         st.markdown(
-            "💡 **Saran:**\n"
-            "- Pertahankan gaya hidup sehat\n"
-            "- Lakukan pemeriksaan rutin\n"
-            "- Jaga pola makan seimbang"
+            "💡 **Saran Medis:**\n"
+            "- Pertahankan pola hidup sehat\n"
+            "- Rutin melakukan pemeriksaan kesehatan\n"
+            "- Jaga pola makan dan aktivitas fisik"
         )
 
 # ======================
@@ -107,6 +121,8 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
 # ======================
 st.divider()
 st.caption(
-    "📌 Catatan: Tekanan darah normal dewasa <120 mmHg dan kolesterol total normal <200 mg/dL. "
+    "📌 Catatan Medis:\n"
+    "- Tekanan darah normal dewasa: sistolik <120 mmHg dan diastolik ≥60 mmHg\n"
+    "- Kolesterol total normal: <200 mg/dL\n"
     "Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis medis."
 )
