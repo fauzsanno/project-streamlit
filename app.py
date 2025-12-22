@@ -4,17 +4,24 @@ import numpy as np
 
 # load model
 model = joblib.load("model.pkl")
-scaler = joblib.load("scaler.pkl")  # hapus jika tidak pakai
 
 st.title("Prediksi Risiko Penyakit Jantung")
 
 # input user
-age = st.number_input("Umur", min_value=1, max_value=100)
-chol = st.number_input("Kolesterol", min_value=100, max_value=400)
+blood_pressure = st.number_input(
+    "Tekanan Darah (mmHg)", 
+    min_value=60, 
+    max_value=200
+)
+
+chol = st.number_input(
+    "Kolesterol (mg/dL)", 
+    min_value=100, 
+    max_value=400
+)
 
 if st.button("Prediksi"):
-    data = np.array([[age, chol]])
-    data = scaler.transform(data)  # hapus jika tidak pakai scaler
+    data = np.array([[blood_pressure, chol]])
 
     pred = model.predict(data)
 
