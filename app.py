@@ -6,7 +6,7 @@ st.markdown(
     """
     <style>
     .stApp {
-            background-color: #1e88e5;
+            background-color: #0A2D4B;
     }
     </style>
     """,
@@ -137,5 +137,6 @@ st.caption(
     "- Kolesterol total normal: <200 mg/dL\n"
     "Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis medis."
 )
+
 
 
