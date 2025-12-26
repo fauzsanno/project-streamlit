@@ -1,4 +1,4 @@
-revisi codingan ini dengan codingan yang telah anda berikan : import streamlit as st
+import streamlit as st
 import joblib
 import numpy as np
 
@@ -137,6 +137,7 @@ st.caption(
     "- Kolesterol total normal: <200 mg/dL\n"
     "Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis medis."
 )
+
 
 
 
