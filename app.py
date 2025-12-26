@@ -44,8 +44,8 @@ model, scaler, selector, selected_features = load_all()
 # ======================
 st.title("❤️ Prediksi Risiko Penyakit Jantung")
 st.write(
-    "Aplikasi ini memprediksi risiko penyakit jantung menggunakan model "
-    "Machine Learning (XGBoost + LightGBM) serta evaluasi medis standar."
+    "Aplikasi ini memprediksi risiko penyakit jantung menggunakan "
+    "Machine Learning (XGBoost + LightGBM) dan evaluasi medis standar."
 )
 
 st.divider()
@@ -56,7 +56,11 @@ st.divider()
 st.subheader("🩺 Data Kesehatan Pasien")
 
 age = st.number_input("Usia (hari)", 1000, 30000, 18000)
-gender = st.selectbox("Jenis Kelamin", options=[1, 2], format_func=lambda x: "Wanita" if x == 1 else "Pria")
+gender = st.selectbox(
+    "Jenis Kelamin",
+    options=[1, 2],
+    format_func=lambda x: "Wanita" if x == 1 else "Pria"
+)
 height = st.number_input("Tinggi Badan (cm)", 100, 250, 170)
 weight = st.number_input("Berat Badan (kg)", 30, 200, 70)
 
@@ -72,8 +76,8 @@ diastolik = st.number_input(
     help="Normal: ≥60 mmHg"
 )
 
-cholesterol = st.selectbox("Kolesterol", [1, 2, 3])
-gluc = st.selectbox("Glukosa", [1, 2, 3])
+cholesterol = st.selectbox("Kolesterol (1=Normal, 2–3=Tinggi)", [1, 2, 3])
+gluc = st.selectbox("Glukosa (1=Normal, 2–3=Tinggi)", [1, 2, 3])
 smoke = st.selectbox("Merokok", [0, 1])
 alco = st.selectbox("Konsumsi Alkohol", [0, 1])
 active = st.selectbox("Aktivitas Fisik", [0, 1])
@@ -109,7 +113,7 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
     input_df["pressure_diff"] = input_df["ap_hi"] - input_df["ap_lo"]
 
     # ======================
-    # Urutan fitur WAJIB sama
+    # Urutan fitur WAJIB SAMA
     # ======================
     feature_order = [
         "age", "gender", "height", "weight",
@@ -120,21 +124,20 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
     ]
     input_df = input_df[feature_order]
 
-   # ======================
-# Preprocessing
-# ======================
-input_scaled = scaler.transform(input_df)
-input_selected = selector.transform(input_scaled)
+    # ======================
+    # Preprocessing
+    # ======================
+    input_scaled = scaler.transform(input_df)
+    input_selected = selector.transform(input_scaled)
 
-# 🔥 FIX WAJIB UNTUK XGBOOST
-input_selected = np.asarray(input_selected)
+    # 🔥 FIX FINAL (WAJIB UNTUK XGBOOST)
+    input_selected = np.asarray(input_selected)
 
-# ======================
-# Prediksi Model
-# ======================
-pred = model.predict(input_selected)[0]
-prob = model.predict_proba(input_selected)[0][1]
-
+    # ======================
+    # Prediksi Model
+    # ======================
+    pred = model.predict(input_selected)[0]
+    prob = model.predict_proba(input_selected)[0][1]
 
     st.subheader("📊 Hasil Prediksi")
 
@@ -192,4 +195,3 @@ st.caption(
     "- Kolesterol normal: level 1\n"
     "Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis medis."
 )
-
