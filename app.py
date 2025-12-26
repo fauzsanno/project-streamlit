@@ -89,55 +89,59 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    # ======================
-    # DataFrame Input
-    # ======================
-    input_df = pd.DataFrame([{
-        "age": age,
-        "gender": gender,
-        "height": height,
-        "weight": weight,
-        "ap_hi": sistolik,
-        "ap_lo": diastolik,
-        "cholesterol": cholesterol,
-        "gluc": gluc,
-        "smoke": smoke,
-        "alco": alco,
-        "active": active
-    }])
+   # ======================
+# DataFrame Input (FITUR ASLI SAJA)
+# ======================
+raw_features = [
+    "age", "gender", "height", "weight",
+    "ap_hi", "ap_lo",
+    "cholesterol", "gluc",
+    "smoke", "alco", "active"
+]
 
-    # ======================
-    # Feature Engineering
-    # ======================
-    input_df["BMI"] = input_df["weight"] / ((input_df["height"] / 100) ** 2)
-    input_df["pressure_diff"] = input_df["ap_hi"] - input_df["ap_lo"]
+input_df = pd.DataFrame([{
+    "age": age,
+    "gender": gender,
+    "height": height,
+    "weight": weight,
+    "ap_hi": sistolik,
+    "ap_lo": diastolik,
+    "cholesterol": cholesterol,
+    "gluc": gluc,
+    "smoke": smoke,
+    "alco": alco,
+    "active": active
+}])[raw_features]
 
-    # ======================
-    # Urutan fitur WAJIB sama seperti training
-    # ======================
-    feature_order = [
-        "age", "gender", "height", "weight",
-        "ap_hi", "ap_lo",
-        "cholesterol", "gluc",
-        "smoke", "alco", "active",
-        "BMI", "pressure_diff"
-    ]
-    input_df = input_df[feature_order]
+# ======================
+# SCALING (AMAN)
+# ======================
+input_scaled = scaler.transform(input_df)
 
-    # ======================
-    # Preprocessing
-    # ======================
-    input_scaled = scaler.transform(input_df)
-    input_selected = selector.transform(input_scaled)
+# ======================
+# FEATURE ENGINEERING (SETELAH SCALING)
+# ======================
+input_scaled = pd.DataFrame(
+    input_scaled,
+    columns=raw_features
+)
 
-    # 🔥 FIX KRUSIAL UNTUK XGBOOST
-    input_selected = np.asarray(input_selected)
+input_scaled["BMI"] = input_scaled["weight"] / ((input_scaled["height"] / 100) ** 2)
+input_scaled["pressure_diff"] = input_scaled["ap_hi"] - input_scaled["ap_lo"]
 
-    # ======================
-    # Prediksi Model
-    # ======================
-    pred = model.predict(input_selected)[0]
-    prob = model.predict_proba(input_selected)[0][1]
+# ======================
+# FEATURE SELECTION
+# ======================
+input_selected = selector.transform(input_scaled)
+
+# FIX WAJIB UNTUK XGBOOST
+input_selected = np.asarray(input_selected)
+
+# ======================
+# PREDIKSI
+# ======================
+pred = model.predict(input_selected)[0]
+prob = model.predict_proba(input_selected)[0][1]
 
     st.subheader("📊 Hasil Prediksi")
 
@@ -195,3 +199,4 @@ st.caption(
     "- Kolesterol normal: level 1\n"
     "Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis medis."
 )
+
