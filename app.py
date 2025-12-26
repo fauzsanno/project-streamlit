@@ -3,7 +3,7 @@ import joblib
 import pandas as pd
 
 # ======================
-# Page Config
+# Page Configuration
 # ======================
 st.set_page_config(
     page_title="Prediksi Risiko Penyakit Jantung",
@@ -42,7 +42,7 @@ model, scaler = load_model()
 st.title("❤️ Prediksi Risiko Penyakit Jantung")
 st.write(
     "Aplikasi ini memprediksi risiko penyakit jantung "
-    "menggunakan Machine Learning."
+    "menggunakan Machine Learning berdasarkan data kesehatan pasien."
 )
 
 st.divider()
@@ -52,8 +52,12 @@ st.divider()
 # ======================
 st.subheader("🩺 Data Kesehatan Pasien")
 
-age = st.number_input("Usia (hari)", 1000, 30000, 18000)
-gender = st.selectbox("Jenis Kelamin", [1, 2], format_func=lambda x: "Wanita" if x == 1 else "Pria")
+age = st.number_input("Usia (hari)", min_value=1000, max_value=30000, value=18000)
+gender = st.selectbox(
+    "Jenis Kelamin",
+    options=[1, 2],
+    format_func=lambda x: "Wanita" if x == 1 else "Pria"
+)
 height = st.number_input("Tinggi Badan (cm)", 100, 250, 170)
 weight = st.number_input("Berat Badan (kg)", 30, 200, 70)
 ap_hi = st.number_input("Tekanan Darah Sistolik (mmHg)", 70, 200, 120)
@@ -71,49 +75,51 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-# ======================
-# INPUT KE SCALER (11 FITUR SAJA)
-# ======================
-input_df = pd.DataFrame([{
-    "age": age,
-    "gender": gender,
-    "height": height,
-    "weight": weight,
-    "ap_hi": ap_hi,
-    "ap_lo": ap_lo,
-    "cholesterol": cholesterol,
-    "gluc": gluc,
-    "smoke": smoke,
-    "alco": alco,
-    "active": active
-}])
+    # ⚠️ WAJIB: 11 fitur, nama & urutan SAMA dengan training
+    input_df = pd.DataFrame([{
+        "age": age,
+        "gender": gender,
+        "height": height,
+        "weight": weight,
+        "ap_hi": ap_hi,
+        "ap_lo": ap_lo,
+        "cholesterol": cholesterol,
+        "gluc": gluc,
+        "smoke": smoke,
+        "alco": alco,
+        "active": active
+    }])
 
-# ======================
-# SCALING (JUMLAH FITUR HARUS 11)
-# ======================
-input_scaled = scaler.transform(input_df)
+    # Scaling (AMAN)
+    input_scaled = scaler.transform(input_df)
 
-# ======================
-# PREDIKSI LANGSUNG
-# ======================
-pred = model.predict(input_scaled)[0]
-prob = model.predict_proba(input_scaled)[0][1]
-
+    # Prediction
+    pred = model.predict(input_scaled)[0]
+    prob = model.predict_proba(input_scaled)[0][1]
 
     st.subheader("📊 Hasil Prediksi")
 
+    # ======================
+    # Output
+    # ======================
     if pred == 1:
-        st.error(f"⚠️ **BERISIKO Penyakit Jantung**\n\nProbabilitas: **{prob:.2%}**")
+        st.error(
+            f"⚠️ **BERISIKO Penyakit Jantung**\n\n"
+            f"Probabilitas Risiko: **{prob:.2%}**"
+        )
     else:
-        st.success(f"✅ **TIDAK BERISIKO Penyakit Jantung**\n\nProbabilitas: **{prob:.2%}**")
+        st.success(
+            f"✅ **TIDAK BERISIKO Penyakit Jantung**\n\n"
+            f"Probabilitas Risiko: **{prob:.2%}**"
+        )
 
 # ======================
-# Notes
+# Medical Notes
 # ======================
 st.divider()
 st.caption(
-    "📌 Catatan:\n"
-    "- Aplikasi ini bersifat pendukung keputusan\n"
-    "- Tidak menggantikan diagnosis medis"
+    "📌 **Catatan Medis:**\n"
+    "- Tekanan darah normal: sistolik <120 mmHg dan diastolik ≥60 mmHg\n"
+    "- Kolesterol normal: level 1\n"
+    "- Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis dokter."
 )
-
