@@ -71,27 +71,34 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    # ✅ DataFrame dengan NAMA KOLOM ASLI (WAJIB)
-    input_df = pd.DataFrame([{
-        "age": age,
-        "gender": gender,
-        "height": height,
-        "weight": weight,
-        "ap_hi": ap_hi,
-        "ap_lo": ap_lo,
-        "cholesterol": cholesterol,
-        "gluc": gluc,
-        "smoke": smoke,
-        "alco": alco,
-        "active": active
-    }])
+# ======================
+# INPUT KE SCALER (11 FITUR SAJA)
+# ======================
+input_df = pd.DataFrame([{
+    "age": age,
+    "gender": gender,
+    "height": height,
+    "weight": weight,
+    "ap_hi": ap_hi,
+    "ap_lo": ap_lo,
+    "cholesterol": cholesterol,
+    "gluc": gluc,
+    "smoke": smoke,
+    "alco": alco,
+    "active": active
+}])
 
-    # Scaling (AMAN)
-    input_scaled = scaler.transform(input_df)
+# ======================
+# SCALING (JUMLAH FITUR HARUS 11)
+# ======================
+input_scaled = scaler.transform(input_df)
 
-    # Prediction
-    pred = model.predict(input_scaled)[0]
-    prob = model.predict_proba(input_scaled)[0][1]
+# ======================
+# PREDIKSI LANGSUNG
+# ======================
+pred = model.predict(input_scaled)[0]
+prob = model.predict_proba(input_scaled)[0][1]
+
 
     st.subheader("📊 Hasil Prediksi")
 
@@ -109,3 +116,4 @@ st.caption(
     "- Aplikasi ini bersifat pendukung keputusan\n"
     "- Tidak menggantikan diagnosis medis"
 )
+
