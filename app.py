@@ -31,7 +31,7 @@ st.set_page_config(
 # ======================
 @st.cache_resource
 def load_all():
-    model = joblib.load("model.joblib")
+    model = joblib.load("model.pkl")                  # ✅ sesuai GitHub
     scaler = joblib.load("scaler.pkl")
     selector = joblib.load("selector.pkl")
     selected_features = joblib.load("selected_features.pkl")
@@ -45,7 +45,7 @@ model, scaler, selector, selected_features = load_all()
 st.title("❤️ Prediksi Risiko Penyakit Jantung")
 st.write(
     "Aplikasi ini memprediksi risiko penyakit jantung menggunakan "
-    "Machine Learning (XGBoost + LightGBM) dan evaluasi medis standar."
+    "Machine Learning (XGBoost + LightGBM) serta evaluasi medis standar."
 )
 
 st.divider()
@@ -113,7 +113,7 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
     input_df["pressure_diff"] = input_df["ap_hi"] - input_df["ap_lo"]
 
     # ======================
-    # Urutan fitur WAJIB SAMA
+    # Urutan fitur WAJIB sama seperti training
     # ======================
     feature_order = [
         "age", "gender", "height", "weight",
@@ -130,7 +130,7 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
     input_scaled = scaler.transform(input_df)
     input_selected = selector.transform(input_scaled)
 
-    # 🔥 FIX FINAL (WAJIB UNTUK XGBOOST)
+    # 🔥 FIX KRUSIAL UNTUK XGBOOST
     input_selected = np.asarray(input_selected)
 
     # ======================
