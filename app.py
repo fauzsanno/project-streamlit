@@ -120,17 +120,21 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
     ]
     input_df = input_df[feature_order]
 
-    # ======================
-    # Preprocessing
-    # ======================
-    input_scaled = scaler.transform(input_df)
-    input_selected = selector.transform(input_scaled)
+   # ======================
+# Preprocessing
+# ======================
+input_scaled = scaler.transform(input_df)
+input_selected = selector.transform(input_scaled)
 
-    # ======================
-    # Prediksi Model
-    # ======================
-    pred = model.predict(input_selected)[0]
-    prob = model.predict_proba(input_selected)[0][1]
+# 🔥 FIX WAJIB UNTUK XGBOOST
+input_selected = np.asarray(input_selected)
+
+# ======================
+# Prediksi Model
+# ======================
+pred = model.predict(input_selected)[0]
+prob = model.predict_proba(input_selected)[0][1]
+
 
     st.subheader("📊 Hasil Prediksi")
 
@@ -188,3 +192,4 @@ st.caption(
     "- Kolesterol normal: level 1\n"
     "Aplikasi ini bersifat pendukung keputusan dan tidak menggantikan diagnosis medis."
 )
+
