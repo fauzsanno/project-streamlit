@@ -1,6 +1,6 @@
 import streamlit as st
 import joblib
-import numpy as np
+import pandas as pd
 
 # ======================
 # Page Config
@@ -42,7 +42,7 @@ model, scaler = load_model()
 st.title("❤️ Prediksi Risiko Penyakit Jantung")
 st.write(
     "Aplikasi ini memprediksi risiko penyakit jantung "
-    "berdasarkan data kesehatan menggunakan Machine Learning."
+    "menggunakan Machine Learning."
 )
 
 st.divider()
@@ -71,23 +71,23 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    # URUTAN HARUS SAMA PERSIS DENGAN DATASET
-    input_array = np.array([[
-        age,
-        gender,
-        height,
-        weight,
-        ap_hi,
-        ap_lo,
-        cholesterol,
-        gluc,
-        smoke,
-        alco,
-        active
-    ]])
+    # ✅ DataFrame dengan NAMA KOLOM ASLI (WAJIB)
+    input_df = pd.DataFrame([{
+        "age": age,
+        "gender": gender,
+        "height": height,
+        "weight": weight,
+        "ap_hi": ap_hi,
+        "ap_lo": ap_lo,
+        "cholesterol": cholesterol,
+        "gluc": gluc,
+        "smoke": smoke,
+        "alco": alco,
+        "active": active
+    }])
 
-    # Scaling (AMAN, TANPA FEATURE NAME ERROR)
-    input_scaled = scaler.transform(input_array)
+    # Scaling (AMAN)
+    input_scaled = scaler.transform(input_df)
 
     # Prediction
     pred = model.predict(input_scaled)[0]
@@ -106,6 +106,6 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
 st.divider()
 st.caption(
     "📌 Catatan:\n"
-    "- Aplikasi ini adalah alat bantu keputusan\n"
-    "- Tidak menggantikan diagnosis dokter"
+    "- Aplikasi ini bersifat pendukung keputusan\n"
+    "- Tidak menggantikan diagnosis medis"
 )
