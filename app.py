@@ -1,6 +1,15 @@
 import streamlit as st
 import joblib
-import pandas as pd
+import numpy as np
+
+# ======================
+# Konfigurasi Halaman (HARUS PALING ATAS)
+# ======================
+st.set_page_config(
+    page_title="Prediksi Risiko Penyakit Jantung",
+    page_icon="❤️",
+    layout="centered"
+)
 
 # ======================
 # Style Background
@@ -17,16 +26,7 @@ st.markdown(
 )
 
 # ======================
-# Konfigurasi Halaman
-# ======================
-st.set_page_config(
-    page_title="Prediksi Risiko Penyakit Jantung",
-    page_icon="❤️",
-    layout="centered"
-)
-
-# ======================
-# Load PIPELINE (WAJIB)
+# Load PIPELINE (WAJIB pipeline lengkap)
 # ======================
 @st.cache_resource
 def load_model():
@@ -39,8 +39,8 @@ model = load_model()
 # ======================
 st.title("❤️ Prediksi Risiko Penyakit Jantung")
 st.write(
-    "Aplikasi ini memprediksi risiko penyakit jantung menggunakan model "
-    "Machine Learning berbasis data medis."
+    "Aplikasi ini memprediksi risiko penyakit jantung menggunakan "
+    "model Machine Learning berbasis data medis."
 )
 
 st.divider()
@@ -103,9 +103,20 @@ gluc = st.selectbox(
     format_func=lambda x: ["Normal", "Di atas normal", "Sangat tinggi"][x - 1]
 )
 
-smoke = st.selectbox("Merokok", [0, 1], format_func=lambda x: "Tidak" if x == 0 else "Ya")
-alco = st.selectbox("Konsumsi Alkohol", [0, 1], format_func=lambda x: "Tidak" if x == 0 else "Ya")
-active = st.selectbox("Aktivitas Fisik", [0, 1], format_func=lambda x: "Tidak Aktif" if x == 0 else "Aktif")
+smoke = st.selectbox(
+    "Merokok", [0, 1],
+    format_func=lambda x: "Tidak" if x == 0 else "Ya"
+)
+
+alco = st.selectbox(
+    "Konsumsi Alkohol", [0, 1],
+    format_func=lambda x: "Tidak" if x == 0 else "Ya"
+)
+
+active = st.selectbox(
+    "Aktivitas Fisik", [0, 1],
+    format_func=lambda x: "Tidak Aktif" if x == 0 else "Aktif"
+)
 
 st.divider()
 
@@ -114,12 +125,7 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-  # ======================
-# Prediksi
-# ======================
-if st.button("🔍 Prediksi Risiko", use_container_width=True):
-
-    # URUTAN WAJIB SAMA DENGAN CSV TRAINING
+    # URUTAN HARUS SAMA DENGAN CSV TRAINING
     input_array = np.array([[
         age,
         gender,
@@ -134,10 +140,9 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         active
     ]])
 
-    # PREDIKSI
+    # Prediksi
     pred = model.predict(input_array)[0]
     prob = model.predict_proba(input_array)[0][1]
-
 
     st.subheader("📊 Hasil Prediksi")
 
@@ -181,9 +186,3 @@ st.caption(
     "- Tidak menggantikan diagnosis dokter\n"
     "- Konsultasikan hasil dengan tenaga medis profesional"
 )
-
-
-
-
-
-
