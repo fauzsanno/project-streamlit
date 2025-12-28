@@ -114,7 +114,7 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    FEATURE_ORDER = [
+      FEATURE_ORDER = [
         "age",
         "gender",
         "height",
@@ -125,9 +125,7 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         "gluc",
         "smoke",
         "alco",
-        "active",
-        "BMI",
-        "pressure_diff"
+        "active"
     ]
     
     input_data = {
@@ -141,10 +139,11 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         "gluc": gluc,
         "smoke": smoke,
         "alco": alco,
-        "active": active,
-        "BMI": weight / ((height / 100) ** 2),
-        "pressure_diff": ap_hi - ap_lo
+        "active": active
     }
+    
+    input_df = pd.DataFrame([input_data])[FEATURE_ORDER]
+
     
     # PAKSA URUTAN KOLOM SESUAI TRAINING
     input_df = pd.DataFrame([input_data])[FEATURE_ORDER]
@@ -198,4 +197,5 @@ st.caption(
     "- Tidak menggantikan diagnosis dokter\n"
     "- Konsultasikan hasil dengan tenaga medis profesional"
 )
+
 
