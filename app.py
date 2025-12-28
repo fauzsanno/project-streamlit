@@ -1,115 +1,55 @@
 import streamlit as st
-import joblib
 import numpy as np
+import joblib
 import pandas as pd
 
-# ======================
-# Konfigurasi Halaman
-# ======================
-st.set_page_config(
-    page_title="Prediksi Risiko Penyakit Jantung",
-    page_icon="❤️",
-    layout="centered"
-)
+st.set_page_config(page_title="Cardio Disease Prediction", layout="centered")
 
-# ======================
-# Style Background
-# ======================
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-color: #D9EBFA;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# ======================
-# Load PIPELINE (pipeline lengkap)
-# ======================
+# Load model
 @st.cache_resource
 def load_model():
-    return joblib.load("pipeline.joblib")
+    model = joblib.load("model/ensemble.pkl")
+    scaler = joblib.load("model/scaler.pkl")
+    selector = joblib.load("model/selector.pkl")
+    return model, scaler, selector
 
-model = load_model()
+model, scaler, selector = load_model()
 
-# ======================
-# Header
-# ======================
-st.title("❤️ Prediksi Risiko Penyakit Jantung")
-st.write(
-    "Aplikasi ini memprediksi risiko penyakit jantung menggunakan "
-    "model Machine Learning berbasis data medis."
-)
+st.title("❤️ Prediksi Penyakit Jantung")
+st.write("Masukkan data pasien untuk prediksi risiko penyakit jantung")
 
-st.divider()
+# Input
+age = st.number_input("Age (days)", min_value=1)
+height = st.number_input("Height (cm)", min_value=100)
+weight = st.number_input("Weight (kg)", min_value=30)
+ap_hi = st.number_input("Systolic BP", min_value=80)
+ap_lo = st.number_input("Diastolic BP", min_value=50)
+cholesterol = st.selectbox("Cholesterol", [1, 2, 3])
+gluc = st.selectbox("Glucose", [1, 2, 3])
+smoke = st.selectbox("Smoke", [0, 1])
+alco = st.selectbox("Alcohol", [0, 1])
+active = st.selectbox("Physical Activity", [0, 1])
 
-# ======================
-# Input User
-# ======================
-st.subheader("🩺 Data Kesehatan")
+if st.button("🔍 Predict"):
+    BMI = weight / ((height/100)**2)
+    pressure_diff = ap_hi - ap_lo
 
-age = st.number_input("Usia (hari)", min_value=0, value=18000)
-gender = st.selectbox("Jenis Kelamin", [1, 2],
-                      format_func=lambda x: "Perempuan" if x == 1 else "Laki-laki")
-height = st.number_input("Tinggi Badan (cm)", 100, 220, 165)
-weight = st.number_input("Berat Badan (kg)", 30, 200, 65)
-ap_hi = st.number_input("Tekanan Darah Sistolik", 70, 250, 120)
-ap_lo = st.number_input("Tekanan Darah Diastolik", 40, 200, 80)
+    data = np.array([[
+        age, height, weight, ap_hi, ap_lo,
+        cholesterol, gluc, smoke, alco, active,
+        BMI, pressure_diff
+    ]])
 
-cholesterol = st.selectbox(
-    "Kolesterol", [1, 2, 3],
-    format_func=lambda x: ["Normal", "Di atas normal", "Sangat tinggi"][x - 1]
-)
+    data_scaled = scaler.transform(data)
+    data_selected = selector.transform(data_scaled)
 
-gluc = st.selectbox(
-    "Glukosa", [1, 2, 3],
-    format_func=lambda x: ["Normal", "Di atas normal", "Sangat tinggi"][x - 1]
-)
-
-smoke = st.selectbox("Merokok", [0, 1], format_func=lambda x: "Tidak" if x == 0 else "Ya")
-alco = st.selectbox("Konsumsi Alkohol", [0, 1], format_func=lambda x: "Tidak" if x == 0 else "Ya")
-active = st.selectbox("Aktivitas Fisik", [0, 1], format_func=lambda x: "Tidak Aktif" if x == 0 else "Aktif")
-
-st.divider()
-
-# ======================
-# Prediksi
-# ======================
-if st.button("🔍 Prediksi Risiko", use_container_width=True):
-
-    # DataFrame dengan FEATURE NAME RESMI
-    input_df = pd.DataFrame([{
-        "age": age,
-        "gender": gender,
-        "height": height,
-        "weight": weight,
-        "ap_hi": ap_hi,
-        "ap_lo": ap_lo,
-        "cholesterol": cholesterol,
-        "gluc": gluc,
-        "smoke": smoke,
-        "alco": alco,
-        "active": active
-    }])
-
-    pred = model.predict(input_df)[0]
-    prob = model.predict_proba(input_df)[0][1]
+    proba = model.predict_proba(data_selected)[0][1]
+    pred = model.predict(data_selected)[0]
 
     st.subheader("📊 Hasil Prediksi")
+    st.write(f"Probabilitas Penyakit Jantung: **{proba:.2%}**")
 
     if pred == 1:
-        st.error(f"⚠️ **BERISIKO Penyakit Jantung** ({prob:.2%})")
+        st.error("⚠️ Berisiko Penyakit Jantung")
     else:
-        st.success(f"✅ **TIDAK BERISIKO Penyakit Jantung** ({1 - prob:.2%})")
-
-# ======================
-# Catatan Medis
-# ======================
-st.divider()
-st.caption(
-    "📌 Aplikasi ini adalah sistem pendukung keputusan dan "
-    "tidak menggantikan diagnosis dokter."
-)
+        st.success("✅ Risiko Rendah")
