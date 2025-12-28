@@ -114,21 +114,7 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    FEATURE_ORDER = [
-        "age",
-        "gender",
-        "height",
-        "weight",
-        "ap_hi",
-        "ap_lo",
-        "cholesterol",
-        "gluc",
-        "smoke",
-        "alco",
-        "active"
-    ]
-    
-    input_data = {
+      raw_input = {
         "age": age,
         "gender": gender,
         "height": height,
@@ -139,12 +125,14 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         "gluc": gluc,
         "smoke": smoke,
         "alco": alco,
-        "active": active
+        "active": active,
+        "BMI": weight / ((height / 100) ** 2),
+        "pressure_diff": ap_hi - ap_lo
     }
     
-    input_df = pd.DataFrame([input_data])[FEATURE_ORDER]
-    
-
+    # AMBIL HANYA FEATURE YANG MODEL PAKE
+    input_df = pd.DataFrame([[raw_input.get(col, 0) for col in FEATURE_ORDER]],
+                            columns=FEATURE_ORDER)
     # ======================
     # Prediksi (PIPELINE HANDLE SEMUA)
     # ======================
@@ -193,6 +181,7 @@ st.caption(
     "- Tidak menggantikan diagnosis dokter\n"
     "- Konsultasikan hasil dengan tenaga medis profesional"
 )
+
 
 
 
