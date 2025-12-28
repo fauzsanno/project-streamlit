@@ -114,41 +114,30 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    FEATURE_ORDER = [
-        "age",
-        "gender",
-        "height",
-        "weight",
-        "ap_hi",
-        "ap_lo",
-        "cholesterol",
-        "gluc",
-        "smoke",
-        "alco",
-        "active"
-    ]
-    
-    input_data = {
-        "age": age,
-        "gender": gender,
-        "height": height,
-        "weight": weight,
-        "ap_hi": ap_hi,
-        "ap_lo": ap_lo,
-        "cholesterol": cholesterol,
-        "gluc": gluc,
-        "smoke": smoke,
-        "alco": alco,
-        "active": active
-    }
-    
-    input_df = pd.DataFrame([input_data])[FEATURE_ORDER]
+  # ======================
+# Prediksi
+# ======================
+if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    # ======================
-    # Prediksi (PIPELINE HANDLE SEMUA)
-    # ======================
-    pred = model.predict(input_df)[0]
-    prob = model.predict_proba(input_df)[0][1]
+    # URUTAN WAJIB SAMA DENGAN CSV TRAINING
+    input_array = np.array([[
+        age,
+        gender,
+        height,
+        weight,
+        ap_hi,
+        ap_lo,
+        cholesterol,
+        gluc,
+        smoke,
+        alco,
+        active
+    ]])
+
+    # PREDIKSI
+    pred = model.predict(input_array)[0]
+    prob = model.predict_proba(input_array)[0][1]
+
 
     st.subheader("📊 Hasil Prediksi")
 
@@ -192,6 +181,7 @@ st.caption(
     "- Tidak menggantikan diagnosis dokter\n"
     "- Konsultasikan hasil dengan tenaga medis profesional"
 )
+
 
 
 
