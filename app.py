@@ -114,10 +114,23 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-    # ======================
-    # Buat DataFrame (WAJIB SAMA DENGAN TRAINING)
-    # ======================
-    input_df = pd.DataFrame([{
+    FEATURE_ORDER = [
+        "age",
+        "gender",
+        "height",
+        "weight",
+        "ap_hi",
+        "ap_lo",
+        "cholesterol",
+        "gluc",
+        "smoke",
+        "alco",
+        "active",
+        "BMI",
+        "pressure_diff"
+    ]
+    
+    input_data = {
         "age": age,
         "gender": gender,
         "height": height,
@@ -131,7 +144,11 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
         "active": active,
         "BMI": weight / ((height / 100) ** 2),
         "pressure_diff": ap_hi - ap_lo
-    }])
+    }
+    
+    # PAKSA URUTAN KOLOM SESUAI TRAINING
+    input_df = pd.DataFrame([input_data])[FEATURE_ORDER]
+
 
     # ======================
     # Prediksi (PIPELINE HANDLE SEMUA)
@@ -181,3 +198,4 @@ st.caption(
     "- Tidak menggantikan diagnosis dokter\n"
     "- Konsultasikan hasil dengan tenaga medis profesional"
 )
+
