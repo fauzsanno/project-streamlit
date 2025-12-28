@@ -114,7 +114,7 @@ st.divider()
 # ======================
 if st.button("🔍 Prediksi Risiko", use_container_width=True):
 
-      FEATURE_ORDER = [
+    FEATURE_ORDER = [
         "age",
         "gender",
         "height",
@@ -143,11 +143,7 @@ if st.button("🔍 Prediksi Risiko", use_container_width=True):
     }
     
     input_df = pd.DataFrame([input_data])[FEATURE_ORDER]
-
     
-    # PAKSA URUTAN KOLOM SESUAI TRAINING
-    input_df = pd.DataFrame([input_data])[FEATURE_ORDER]
-
 
     # ======================
     # Prediksi (PIPELINE HANDLE SEMUA)
@@ -197,5 +193,6 @@ st.caption(
     "- Tidak menggantikan diagnosis dokter\n"
     "- Konsultasikan hasil dengan tenaga medis profesional"
 )
+
 
 
